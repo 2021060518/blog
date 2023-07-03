@@ -39,11 +39,7 @@ export default defineAppConfig({
       linkedin: {
       label: '浙ICP备18035094号-1',
       href: 'https://beian.miit.gov.cn/'
-    }
-      
-    }
-    form: {
-      successMessage: 'Message sent. Thank you!'
+      }
     }
   }
 })
