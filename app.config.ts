@@ -23,7 +23,7 @@ export default defineAppConfig({
       },
       navigation: false, // possible value are : true | false
       alignment: 'center', // possible value are : 'none' | 'left' | 'center' | 'right'
-      message: '<a href="https://beian.miit.gov.cn/">浙ICP备18035094号-1</a>' // string that will be displayed in the footer (leave empty or delete to disable)
+      message: '' // string that will be displayed in the footer (leave empty or delete to disable)
     },
     // socials: {
     //   twitter: 'nuxtlabs',
@@ -34,6 +34,14 @@ export default defineAppConfig({
     //     href: 'https://www.linkedin.com/company/nuxtlabs'
     //   }
     // },
+
+    socials: {
+      linkedin: {
+      label: '浙ICP备18035094号-1',
+      href: 'https://beian.miit.gov.cn/'
+    }
+      
+    }
     form: {
       successMessage: 'Message sent. Thank you!'
     }
