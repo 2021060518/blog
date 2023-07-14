@@ -1,0 +1,89 @@
+---
+cover: https://qyue.me/4CydY8
+date: 2023-07-14
+layout: article
+description: 这是一个p2p迁移的记录文档
+---
+
+## 1.安装zerotier
+```
+docker pull keynetworks/ztncui
+```
+```
+docker run -d --name zt-ui -v /home/docker/zt-ui/zerotier-one:/var/lib/zerotier-one -v /home/docker/zt-ui/ztncui/etc:/opt/key-networks/ztncui/etc -p 4000:4000 -p 3180:3180 -p 9993:9993 -p 9993:9993/udp -e MYADDR=公网ip -e HTTP_PORT=4000 -e HTTP_ALL_INTERFACES=yes -e ZTNCUI_PASSWD=admin123 --restart=always 4bb2
+```
+```
+docker cp patch.sh zt-ui:/tmp
+```
+```
+docker cp mkmoonworld-x86_64 zt-ui:/tmp
+```
+```
+docker exec -it zt-ui bash /tmp/patch.sh && docker restart zt-ui
+```
+
+
+
+## 2.安装xray
+
+ [直接访问xray官网](https://xtls.github.io/)
+
+
+
+## 3.安装frps
+
+```
+vim /etc/systemd/system/frps.service
+```
+```
+[Unit]
+Description = frp server
+After = network.target syslog.target
+Wants = network.target
+
+[Service]
+Type = simple
+# 启动frps的命令，需修改为您的frps的安装路径
+ExecStart = /opt/frp/frps -c /opt/frp/frps.ini
+
+[Install]
+WantedBy = multi-user.target
+```
+```
+systemctl daemon-reload 
+```
+
+
+
+## 4.配置Nginx
+
+```
+server
+{
+    listen 80;
+    server_name p2p.witque.cn;
+
+    location /{
+           	proxy_pass http://127.0.0.1:4000;
+            proxy_redirect off;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header Host $http_host;
+            proxy_set_header X-NginX-Proxy true;
+    }
+
+ 	location /api{
+            proxy_pass http://127.0.0.1:7500/api;
+	
+	}
+	
+	location /static {
+	        return 301 $request_uri/frp/;
+	}
+	
+	location /frp/{
+	        proxy_pass http://127.0.0.1:7500/static/;
+	}
+
+}
+```
